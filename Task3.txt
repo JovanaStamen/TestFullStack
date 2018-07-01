@@ -1,0 +1,59 @@
+ApplicationForm.aspx
+I see that there is lot of CSS included in this page, in the middle of the page.
+I would separate it into a different file and include it here or even better in the Master Page. This now depends how the rest of the project looks like as well as the MasterPage itsself.
+If this page should be indexed by google and in order to have good results with Page insights, it should be minimized and in separate file (or inlined) but should be included
+ into the ~/Templates/MasterPages/MasterPage.Master, if we assume that this is part of some bigger project.
+So the rule is css at the beggining, in <head> tag and scripts at the end of the page, before closing the <body> tag -> I would prefer them to be as well in the ~/Templates/MasterPages/MasterPage.Master.
+How it is now user will have a flesh of empty content because Css won't be loaded until all the scripts aren't loaded.
+There is also one div tag <div class="dashedline"><!-- ---></div> that is not needed at all so I would remove this.
+
+ApplicationForm.aspx.cs
+I would concetrate here on ContactPerson class.
+It is defined directly here in the webform backend page.
+It should be in different folder (for example Models folder) because I am not sure if some other page is supposed to use this class, but lets suppose that it has to.
+All the functions manipulating with this class should be part of this newly created class, or even better, class fields should just be defined like private. I would create an Interface that is manipulating
+with this functions from it.
+So for example GetEmailForMunicipality should be also part of this newly created class, and it shouldn't work on list but on class itsself.
+It would return Muncipality from ContactPerson.
+Should look something like this:
+
+
+
+    public class ContactPerson
+    {
+        private string Municipality { get; set; }
+        private string County { get; set; }
+        private string Email { get; set; }
+
+        public ContactPerson(string municipality, string county, string email)
+        {
+            this.Municipality = municipality;
+            this.County = county;
+            this.Email = email;
+        }
+
+      
+        public string GetEmailForMunicipality(string municipality)
+        {
+            
+                if (this.Municipality.Equals(municipality, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return this.Email;
+                }
+                else
+                {
+                    return null;
+                }
+           
+        }
+
+        
+
+    }
+
+Another class I would create that will just contains List<ContactPerson> lets call it ContactPersons.
+All List manipulation classes should go in it. This is where mocks can also be created.
+
+Helper functions like GetLanguageString, GetCurrentLanguage,SendMail should be defined globally like static functions.
+  
+
